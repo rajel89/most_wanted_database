@@ -8,7 +8,7 @@ Build all of your functions for displaying and gathering information below (GUI)
 
 // app is the function called to start the entire application
 function app(people){
-  let searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
+  let searchType = promptFor("Do you know the name of the person you are looking for? \nSelect option:  \n[1] Yes \n[2] No", yesNo).toLowerCase();
   let searchResults;
   switch(searchType){
     case 'yes':
@@ -19,7 +19,7 @@ function app(people){
 
     //TODO: Search by traits
  
-    let searchingByTraits = prompt("Would you like to search by traits? Enter 'yes' or 'no'");
+    let searchingByTraits = prompt("Would you like to search by traits? \nSelect option \n[1] Yes  \n[2] No");
    
     switch(searchingByTraits){
       case 'yes':
@@ -41,16 +41,22 @@ function app(people){
 }
 
 // Menu function to call once you find who you are looking for
-function mainMenu(person, people){
+function mainMenu(person, people, keyword=""){
 
   /* Here we pass in the entire person object that we found in our search, as well as the entire original dataset of people. We need people in order to find descendants and other information that the user may want. */
 
   if(!person){
     alert("Could not find that individual.");
+    if(keyword == "")
+    {
+    alert("Could not find that individual.");
+    }else{
+    alert("Could not find that individual.");
+    }
     return app(people); // restart
   }
 
-  let displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'");
+  let displayOption = prompt("Success! Found " + person.firstName + " " + person.lastName + ".\nDo you want to know their \n[1] Info \n[2] Family \n[3] Descendants \n\nType the option you want to \n[1] Restart \n[2] Quit ");
 
   switch(displayOption){
     case "info":
@@ -65,8 +71,26 @@ function mainMenu(person, people){
     break;
     case "descendants":
     let foundDescendants = findDescendants(people, person);
-          console.log(foundDescendants);
+          
     
+          function findDescendants(people, person){
+            let listOfDescendants = [];
+        
+            for (let i=0; i<people.length; i++) {
+                 if(people[i].parents.includes(person.id)){
+                   listOfDescendants.push(people[i])  
+                 }
+            }
+            for (let i=0; i<listOfDescendants.length; i++){
+                listOfDescendants = listOfDescendants.concat(findDescendants(people,listOfDescendants[i])) 
+          
+            }
+            return listOfDescendants;
+          }
+          console.log(foundDescendants);
+          
+    
+         
     // TODO: get person's descendants
     break;
     case "restart":
@@ -80,11 +104,11 @@ function mainMenu(person, people){
 }
 
 function searchByName(people){
-  let firstName = promptFor("What is the person's first name?", chars);
-  let lastName = promptFor("What is the person's last name?", chars);
+  let firstName = promptFor("What is the person's first name?", chars).toLowerCase();
+  let lastName = promptFor("What is the person's last name?", chars).toLowerCase();
 
   let foundPerson = people.filter(function(person){
-    if(person.firstName === firstName && person.lastName === lastName){
+    if(person.firstName.toLowerCase() === firstName && person.lastName.toLowerCase() === lastName){
       return true;
     }
     else{
@@ -109,14 +133,14 @@ function displayPerson(person){
 //>>Code from zack...06.29.2021
 
 let personInfo = "First Name: " + person.firstName + "\n";
-personInfo += "Last Name: " + person.lastName + "\n";
-personInfo += "DoB: " + person.dob+ "\n";
-personInfo += "height: " + person.height + "\n";
-personInfo += "weight: " + person.weight + "\n";
-personInfo += "age: " + person.age + "\n";
-personInfo += "occupation: " + person.occupation + "\n";
-personInfo += "eye color: " + person.eyeColor + "\n";
-personInfo += "gender: " + person.gender + "\n";
+    personInfo += "Last Name: " + person.lastName + "\n";
+    personInfo += "DoB: " + person.dob+ "\n";
+    personInfo += "height: " + person.height + "\n";
+    personInfo += "weight: " + person.weight + "\n";
+    personInfo += "age: " + person.age + "\n";
+    personInfo += "occupation: " + person.occupation + "\n";
+    personInfo += "eye color: " + person.eyeColor + "\n";
+    personInfo += "gender: " + person.gender + "\n";
 
 // TODO: finish getting the rest of the information to display
 alert(personInfo);
@@ -147,11 +171,14 @@ function chars(input){
 // let traits =["height"];
 
 function searchByTraits(people){
-  let height = prompt("What is the persons height?");
-  let weight = prompt("What is the persons weight?");
+  let height = prompt("Height?");
+  let weight = prompt("Weight?");
+  let eyeColor = prompt("Eye color?");
+  let occupation = prompt("occupation?");
+
 
   let foundTraits = people.filter(function(person){
-    if(person.height == height && person.weight == weight){
+    if(person.height == height && person.weight == weight && person.eyeColor == eyeColor && person.occupation == occupation){
       return true;
     }
     else{
@@ -163,20 +190,6 @@ function searchByTraits(people){
 }
 
 
-function findDescendants(people, person){
-    let listOfDescendants = [];
 
-    for (let i=0; i<people.length; i++) {
-         if(people[i].parents.includes(person.id)){
-           listOfDescendants.push(people[i])  
-         }
-    }
-    for (let i=0; i<listOfDescendants.length; i++){
-        listOfDescendants = listOfDescendants.concat(findDescendants(people,listOfDescendants[i])) 
- 
-      
-    }
+   
     
-    return listOfDescendants;
-    
-}
