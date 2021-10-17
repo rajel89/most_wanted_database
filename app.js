@@ -8,13 +8,13 @@ Build all of your functions for displaying and gathering information below (GUI)
 
 // app is the function called to start the entire application
 function app(people){
-  let searchType = promptFor("Do you know the name of the person you are looking for? \nSelect option:  \n[1] Yes \n[2] No", yesNo).toLowerCase();
+  let searchType = promptFor("Do you know the name of the person you are looking for? \nSelect option:  \n[1] Yes \n[2] No \n[3] Search by full name", searchOption).toLowerCase();
   let searchResults;
   switch(searchType){
-    case 'yes':
+    case '1':
       searchResults = searchByName(people);
       break;
-    case 'no':
+      case '2':
 
 
     //TODO: Search by traits
@@ -28,10 +28,16 @@ function app(people){
       case 'no':
         alert("We can not proceed")
     }
+    break;
     
+      case'3':
+      // Search by full name
+      searchResults = searchbyFullName(people);
+      console.log(searchResults)
     
-      break;
-      default:
+    break;
+
+    default:
     app(people); // restart app
       break;
   }
@@ -41,7 +47,7 @@ function app(people){
 }
 
 // Menu function to call once you find who you are looking for
-function mainMenu(person, people, keyword=""){
+function mainMenu(person, people){
 
   /* Here we pass in the entire person object that we found in our search, as well as the entire original dataset of people. We need people in order to find descendants and other information that the user may want. */
 
@@ -93,10 +99,13 @@ function mainMenu(person, people, keyword=""){
          
     // TODO: get person's descendants
     break;
+
     case "restart":
     app(people); // restart
     break;
+
     case "quit":
+
     return; // stop execution
     default:
     return mainMenu(person, people); // ask again
@@ -156,8 +165,8 @@ function promptFor(question, valid){
 }
 
 // helper function to pass into promptFor to validate yes/no answers
-function yesNo(input){
-  return input.toLowerCase() == "yes" || input.toLowerCase() == "no";
+function searchOption(input){
+  return input.toLowerCase() == "1" || input.toLowerCase() == "2" || input.toLowerCase() == "3";
 }
 
 // helper function to pass in as default promptFor validation
@@ -165,29 +174,43 @@ function chars(input){
   return true; // default validation only
 }
 
-// function searchByTraits(traits){
-// }
-
-// let traits =["height"];
+// function searchByTraits(traits)
 
 function searchByTraits(people){
-  let height = prompt("Height?");
-  let weight = prompt("Weight?");
-  let eyeColor = prompt("Eye color?");
-  let occupation = prompt("occupation?");
+  let height = prompt("What is the persons height?");
+  let weight = prompt("What is the persons weight?");
+  let eyeColor = prompt("What is the persons eye color?");
+  let occupation = prompt("What is the persons occupation?");
 
+  let result = [];
+  people.map((person, index) => {
+    
+    if(person.height == height || person.weight == weight || person.eyeColor == eyeColor || person.occupation == occupation)
+    {
+      result[index] = person;
+    }
+  });
 
-  let foundTraits = people.filter(function(person){
-    if(person.height == height && person.weight == weight && person.eyeColor == eyeColor && person.occupation == occupation){
-      return true;
-    }
-    else{
-      return false;
-    }
-  })
-  // TODO: find the person using the traits they entered
-  return foundTraits;
+  return {data: result, searchTraits: {height: height, weight:weight, eyeColor:eyeColor, occupation:occupation}};
 }
+
+function searchbyFullName(people)
+{
+  let fullName = prompt("What is the persons full name?");
+  let result = [];
+  
+  people.map((data, index) => {
+
+    if(data.firstName.toLowerCase().includes(fullName.toLowerCase()) ||   data.lastName.toLowerCase().includes(fullName.toLowerCase()))
+    {
+      result[index] = people[index];
+    }
+  });
+
+  return result;
+
+}
+
 
 
 
