@@ -169,9 +169,11 @@ function mainMenu(person, people){
       app(people);
       
     break;
+
+     // TODO: get person's descendants
     
-    case "descendants":
-    let foundDescendants = findDescendants(people, person);
+     case "3":
+      let foundDescendants = findDescendants(people, person);
           
     
           function findDescendants(people, person){
@@ -188,11 +190,14 @@ function mainMenu(person, people){
             }
             return listOfDescendants;
           }
-          console.log(foundDescendants);
-          
-    
+
+          if(foundDescendants.length !== 0)
+          {
+            displayPeople(foundDescendants, people)
+          }else{
+            alert(person.firstName + ' ' + person.lastName + ' has no decendants record.');
+          }
          
-    // TODO: get person's descendants
     break;
 
     case "restart":
