@@ -287,7 +287,7 @@ function promptFor(question, valid){
 
 // helper function to pass into promptFor to validate yes/no answers
 function searchOption(input){
-  return input.toLowerCase() == "1" || input.toLowerCase() == "2" || input.toLowerCase() == "3";
+  return input.toLowerCase() == "1" || input.toLowerCase() == "2" || input.toLowerCase() == "3"|| input.toLowerCase() == "4" || input.toLowerCase() == "5";
 }
 
 // helper function to pass in as default promptFor validation
