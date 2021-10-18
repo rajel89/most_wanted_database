@@ -71,7 +71,7 @@ function mainMenu(person, people){
     return app(people); // restart
   }
 
-  let displayOption = promptFor("Success! Found " + person.firstName + " " + person.lastName + ".\nDo you want to know their \n[1] Info \n[2] Family \n[3] Descendants \n\nType the option you want to \n[1] Restart \n[2] Quit ", searchOption);
+  let displayOption = promptFor("Success! Found " + person.firstName + " " + person.lastName + ".\nDo you want to know their \n[1] Info \n[2] Family \n[3] Descendants \n\nType the option you want to \n[4] Restart \n[5] Quit ", searchOption);
 
 
   switch(displayOption){
@@ -230,10 +230,30 @@ function searchByName(people){
 }
 
 // alerts a list of people
-function displayPeople(people){
-  alert(people.map(function(person){
-    return person.firstName + " " + person.lastName;
-  }).join("\n"));
+function displayPeople(result, people, searchTrait=false){
+  let counter = 1;
+  let data;
+  let searchTraitResult;
+
+  if(!searchTrait)
+  {
+    data = 'Success! ' + result.length + ' records found: \n\n';
+    searchTraitResult = result
+  }else{
+    data = 'Success! ' + result.length + ' records found: \n\n';
+    data += `Traits option search\nHeight: ['${result.searchTraits.height}'], Weight: ['${result.searchTraits.weight}'], Eye Color: ['${result.searchTraits.eyeColor}'], Occupation: ['${result.searchTraits.occupation}'] \n\n`
+    searchTraitResult = result.data
+  }
+
+  
+  // console.log(searchTraitResult)
+  searchTraitResult.map(function(result){
+    data +=  `[${counter}] ` + result.firstName + " " + result.lastName + "\n";
+    counter++;
+  });
+
+  alert(data);
+  app(people);
 }
 
 function displayPerson(person){
@@ -297,7 +317,7 @@ function searchByTraits(people){
 
 function searchbyFullName(people)
 {
-  let fullName = prompt("What is the persons full name?");
+  let fullName = prompt("What is the persons first or last name?");
   let result = [];
   
   people.map((data, index) => {
