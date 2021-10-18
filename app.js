@@ -8,42 +8,51 @@ Build all of your functions for displaying and gathering information below (GUI)
 
 // app is the function called to start the entire application
 function app(people){
-  let searchType = promptFor("Do you know the name of the person you are looking for? \nSelect option:  \n[1] Yes \n[2] No \n[3] Search by full name", searchOption).toLowerCase();
+  let searchType = promptFor("Do you know the name of the person you are looking for? \nSelect option:  \n[1] Yes \n[2] No \n[3] Search by keyword name", searchOption).toLowerCase();
+  
   let searchResults;
   switch(searchType){
     case '1':
       searchResults = searchByName(people);
       break;
-      case '2':
-
-
-    //TODO: Search by traits
+    case '2':
  
-    let searchingByTraits = prompt("Would you like to search by traits? \nSelect option \n[1] Yes  \n[2] No");
-   
-    switch(searchingByTraits){
-      case 'yes':
-        searchResults = searchByTraits(people);
-        break;
-      case 'no':
-        alert("We can not proceed")
-    }
-    break;
+      let searchingByTraits = promptFor("Would you like to search by traits? \nSelect option \n[1] Yes  \n[2] No", searchOption).toLowerCase()
     
-      case'3':
-      // Search by full name
-      searchResults = searchbyFullName(people);
-      console.log(searchResults)
-    
-    break;
+      switch(searchingByTraits){
+        case '1':
+          searchResults = searchByTraits(people);
+          break;
+        case '2':
+          alert("We can not proceed");
+          break;
+      }
+      break;
 
-    default:
-    app(people); // restart app
+    case '3':
+        // Search by full name
+        searchResults = searchbyFullName(people);
+      break;
+
+      default:
+        app(people); // restart app
       break;
   }
   
   // Call the mainMenu function ONLY after you find the SINGLE person you are looking for
-  mainMenu(searchResults[0], people);
+  if(searchType == '2' || searchType == '3')
+  {
+    if(searchType == '2')
+    {
+      displayPeople(searchResults, people, searchResults)
+    }else{
+      displayPeople(searchResults, people)
+    }
+    
+  }else{
+    mainMenu(searchResults[0], people);
+  }
+  
 }
 
 // Menu function to call once you find who you are looking for
@@ -62,19 +71,105 @@ function mainMenu(person, people){
     return app(people); // restart
   }
 
-  let displayOption = prompt("Success! Found " + person.firstName + " " + person.lastName + ".\nDo you want to know their \n[1] Info \n[2] Family \n[3] Descendants \n\nType the option you want to \n[1] Restart \n[2] Quit ");
+  let displayOption = promptFor("Success! Found " + person.firstName + " " + person.lastName + ".\nDo you want to know their \n[1] Info \n[2] Family \n[3] Descendants \n\nType the option you want to \n[1] Restart \n[2] Quit ", searchOption);
+
 
   switch(displayOption){
-    case "info":
+    case "1":
     // TODO: get person's info
     let foundInfo = displayPerson(person);
-    console.log(foundInfo); 
 
-    
     break;
-    case "family":
+
     // TODO: get person's family
+     case "2":
+      let foundFamily = findFamily(people, person);
+      
+      function findFamily(people, person)
+      {
+        let listOfChildren = [];
+        let listOfSpouse = [];
+        let parents = [];
+        
+            for (let i=0; i<people.length; i++)
+            {
+                  if(people[i].parents.includes(person.id))
+                  {
+                    listOfChildren.push(people[i])  
+                  }
+            }
+            for (let i=0; i<listOfChildren.length; i++){
+                listOfChildren = listOfChildren.concat(findDescendants(people,listOfChildren[i])) 
+          
+            }
+
+            // if person has a parents
+            if(person.parents.length > 0)
+            {
+              for (let i=0; i<person.parents.length; i++)
+              {
+                for(let x=0; x<people.length; x++)
+                {
+                  if(person.parents[i] == people[x].id)
+                  {
+                    parents.push(people[x]);
+                  }
+                }
+              }
+            }
+            
+            // if person has a spouse
+            if(person.currentSpouse !== null)
+            {
+              for(let x=0; x<people.length; x++)
+              {
+                if(person.currentSpouse == people[x].id)
+                {
+                  listOfSpouse.push(people[x]);
+                }
+              }
+            }
+
+            return {"siblings": listOfChildren, "parents": parents, "spouse": listOfSpouse};
+            
+      }
+
+      let data = `Family record of ${person.firstName} ${person.lastName}: \n\n`;
+      
+      data += `Parents:\n`;
+      if(foundFamily.parents.length > 0)
+      {
+        for(let i=0; i<foundFamily.parents.length; i++)
+        {
+          data += `(${i+1}) ${foundFamily.parents[i].firstName} ${foundFamily.parents[i].lastName} \n`
+        }
+        data += `\n\n`;
+      }
+
+      data += `Spouse:\n`;
+      if(foundFamily.spouse.length > 0)
+      {
+        for(let i=0; i<foundFamily.spouse.length; i++)
+        {
+          data += `(${i+1}) ${foundFamily.spouse[i].firstName} ${foundFamily.spouse[i].lastName}\n`
+        }
+        data += `\n\n`;
+      }
+
+      data += `Siblings:\n`;
+      if(foundFamily.siblings.length > 0)
+      {
+        for(let i=0; i<foundFamily.siblings.length; i++)
+        {
+          data += `(${i+1}) ${foundFamily.siblings[i].firstName} ${foundFamily.siblings[i].lastName}\n`
+        }
+      }
+
+      alert(data);
+      app(people);
+      
     break;
+    
     case "descendants":
     let foundDescendants = findDescendants(people, person);
           
@@ -143,13 +238,13 @@ function displayPerson(person){
 
 let personInfo = "First Name: " + person.firstName + "\n";
     personInfo += "Last Name: " + person.lastName + "\n";
+    personInfo += "gender: " + person.gender + "\n";
     personInfo += "DoB: " + person.dob+ "\n";
     personInfo += "height: " + person.height + "\n";
     personInfo += "weight: " + person.weight + "\n";
     personInfo += "age: " + person.age + "\n";
     personInfo += "occupation: " + person.occupation + "\n";
     personInfo += "eye color: " + person.eyeColor + "\n";
-    personInfo += "gender: " + person.gender + "\n";
 
 // TODO: finish getting the rest of the information to display
 alert(personInfo);
