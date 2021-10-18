@@ -200,17 +200,18 @@ function mainMenu(person, people){
          
     break;
 
-    case "restart":
-    app(people); // restart
+    case "4":
+      app(people); // restart
     break;
 
-    case "quit":
-
-    return; // stop execution
-    default:
-    return mainMenu(person, people); // ask again
+    case "5":
+      return; // stop execution
+    
+      default:
+      return mainMenu(person, people); // ask again
   }
 }
+
 
 function searchByName(people){
   let firstName = promptFor("What is the person's first name?", chars).toLowerCase();
